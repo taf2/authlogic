@@ -15,7 +15,8 @@ module Authlogic
       
       def cookie_domain
         @cookie_domain_key ||= Rails::VERSION::STRING >= '2.3' ? :domain : :session_domain
-        ActionController::Base.session_options[@cookie_domain_key]
+        # try rails 2.x session_options and if not than use 3.x style else raise
+        ActionController::Base.respond_to?(:session_options) ? ActionController::Base.session_options[@cookie_domain_key] : controller.request.session_options[@cookie_domain_key]
       end
       
       def request_content_type
