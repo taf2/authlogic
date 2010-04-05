@@ -182,7 +182,8 @@ module Authlogic
           klass.define_callbacks *METHODS
           
           # If Rails 3, support the new callback syntax
-          if klass.metaclass.method_defined?(:set_callback)
+          if (klass.respond_to?(:metaclass) and klass.metaclass.method_defined?(:set_callback)) or
+             (klass.respond_to?(:singleton_class) and klass.singleton_class.method_defined?(:set_callback))
             METHODS.each do |method|
               klass.class_eval <<-"end_eval", __FILE__, __LINE__
                 def self.#{method}(*methods, &block)
